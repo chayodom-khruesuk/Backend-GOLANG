@@ -13,11 +13,21 @@ import (
 )
 
 func GetProfile(c *fiber.Ctx) error {
-	return c.SendString("Hello")
+	db := database.DBConn
+	var profile []m.Profile
+	db.Find(&profile)
+	return c.Status(200).JSON(profile)
 }
 
 func GetProfileById(c *fiber.Ctx) error {
-	return c.SendString("Hello")
+	db := database.DBConn
+	var profile m.Profile
+	id := c.Params("id")
+	result := db.First(&profile, id)
+	if result.Error != nil {
+		return c.Status(404).SendString("Company not found")
+	}
+	return c.Status(200).JSON(profile)
 }
 
 func GetRangeProfile(c *fiber.Ctx) error {
@@ -171,9 +181,39 @@ func CreateProfile(c *fiber.Ctx) error {
 }
 
 func UpdateProfile(c *fiber.Ctx) error {
-	return c.SendString("Hello")
+	db := database.DBConn
+	var profile m.Profile
+	id := c.Params("id")
+	result := db.First(&profile, id)
+	if result.Error != nil {
+		return c.Status(404).SendString("Profile not found")
+	}
+
+	if err := c.BodyParser(&profile); err != nil {
+		return c.Status(400).SendString(err.Error())
+	}
+
+	db.Where("id = ?", id).Updates(&profile)
+	db.Save(&profile)
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"data":    profile,
+		"message": "Profile updated successfully",
+	})
 }
 
 func DeleteProfile(c *fiber.Ctx) error {
-	return c.SendString("Hello")
+	db := database.DBConn
+	var profile m.Profile
+	id := c.Params("id")
+	result := db.First(&profile, id)
+	if result.Error != nil {
+		return c.Status(404).SendString("Profile not found")
+	}
+	db.Delete(&profile)
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"data":    profile,
+		"message": "Profile deleted successfully",
+	})
 }
