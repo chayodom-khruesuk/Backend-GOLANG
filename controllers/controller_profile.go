@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func GetProfile(c *fiber.Ctx) error {
@@ -215,5 +216,39 @@ func DeleteProfile(c *fiber.Ctx) error {
 		"status":  "success",
 		"data":    profile,
 		"message": "Profile deleted successfully",
+	})
+}
+
+func SearchProfile(c *fiber.Ctx) error {
+	db := database.DBConn
+	search := strings.TrimSpace(c.Query("search"))
+
+	if search == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "error",
+			"message": "กรุณาระบุคำค้นหา",
+		})
+	}
+
+	var profiles []m.Profile
+	result := db.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Where("employee_id LIKE ?", "%"+search+"%").
+			Or("fname LIKE ?", "%"+search+"%").
+			Or("last_name LIKE ?", "%"+search+"%")
+	}).Find(&profiles)
+
+	if result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": "เกิดข้อผิดพลาดในการค้นหา",
+			"error":   result.Error.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":      "success",
+		"count":       len(profiles),
+		"data":        profiles,
+		"search_term": search,
 	})
 }

@@ -22,6 +22,7 @@ func InetRoutes(app *fiber.App) {
 	user.Get("/id", auth, c.GetProfileById)
 	user.Get("/range", auth, c.GetRangeProfile)
 	user.Post("/register", auth, c.CreateProfile)
+	user.Post("/filter", c.SearchProfile)
 	user.Put("/update/:id", auth, c.UpdateProfile)
 	user.Delete("/delete/:id", auth, c.DeleteProfile)
 
