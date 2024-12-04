@@ -78,12 +78,6 @@ type ProfileRes struct {
 	Gen        string `json:"gen"`
 }
 
-type ResultProfile struct {
-	Data  []ProfileRes `json:"data"`
-	Name  string       `json:"name"`
-	Count int          `json:"count"`
-}
-
 type ResultGen struct {
 	Data          []ProfileRes `json:"data"`
 	Name          string       `json:"name"`

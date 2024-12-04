@@ -24,7 +24,7 @@ func InetRoutes(app *fiber.App) {
 	user.Post("/register", auth, c.CreateProfile)
 	user.Post("/filter", c.SearchProfile)
 	user.Put("/update/:id", auth, c.UpdateProfile)
-	user.Delete("/delete/:id", auth, c.DeleteProfile)
+	user.Delete("/del/:id", auth, c.DeleteProfile)
 
 	ex.Get("/fact/:value", c.Factorial)
 	ex.Post("/registerDemo", c.Register)
@@ -32,7 +32,7 @@ func InetRoutes(app *fiber.App) {
 	v3.Get("/film", c.AsciiConv)
 
 	dog.Get("", c.GetDogs)
-	dog.Get("/filter", c.GetDog)
+	dog.Get("/filter", c.GetDogSearch)
 	dog.Get("/json", c.GetDogsJson)
 	dog.Get("/del", c.GetDogDelete)
 	dog.Get("/range", c.GetDogRange)

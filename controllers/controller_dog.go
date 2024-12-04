@@ -17,7 +17,7 @@ func GetDogs(c *fiber.Ctx) error {
 	return c.Status(200).JSON(dogs)
 }
 
-func GetDog(c *fiber.Ctx) error {
+func GetDogSearch(c *fiber.Ctx) error {
 	db := database.DBConn
 	search := strings.TrimSpace(c.Query("search"))
 	var dog []m.Dogs
