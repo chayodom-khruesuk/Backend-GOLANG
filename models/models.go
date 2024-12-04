@@ -71,9 +71,33 @@ type Company struct {
 	Industry        string
 }
 
+type ProfileRes struct {
+	Name       string `json:"name"`
+	EmployeeId int    `json:"employee_id"`
+	Age        int    `json:"age"`
+	Gen        string `json:"gen"`
+}
+
+type ResultProfile struct {
+	Data  []ProfileRes `json:"data"`
+	Name  string       `json:"name"`
+	Count int          `json:"count"`
+}
+
+type ResultGen struct {
+	Data          []ProfileRes `json:"data"`
+	Name          string       `json:"name"`
+	Count         int          `json:"count"`
+	SumGenZ       int          `json:"gen_z"`
+	SumGenY       int          `json:"gen_y"`
+	SumGenX       int          `json:"gen_x"`
+	SumBaByBoomer int          `json:"baby_boomer"`
+	SumGI         int          `json:"gen_g"`
+}
+
 type Profile struct {
 	gorm.Model
-	EmployeeId int    `json:"employee,omitempty" validate:"required" gorm:"unique"`
+	EmployeeId int    `json:"employee_id,omitempty" validate:"required" gorm:"unique"`
 	Name       string `json:"name,omitempty" validate:"required,min=2,max=30"`
 	LastName   string `json:"lastname,omitempty" validate:"required,min=2,max=30"`
 	BirthDay   string `json:"birthday,omitempty" validate:"required" gorm:"type:date"`

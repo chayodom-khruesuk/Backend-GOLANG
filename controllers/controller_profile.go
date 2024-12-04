@@ -20,6 +20,58 @@ func GetProfileById(c *fiber.Ctx) error {
 	return c.SendString("Hello")
 }
 
+func GetRangeProfile(c *fiber.Ctx) error {
+	db := database.DBConn
+	var profile []m.Profile
+
+	db.Find(&profile)
+	sum_GenZ := 0
+	sum_GenY := 0
+	sum_GenX := 0
+	sum_BaByBoomer := 0
+	sum_GenGI := 0
+
+	var dataResults []m.ProfileRes
+	for _, v := range profile {
+		GenStr := ""
+		if v.Age < 24 {
+			GenStr = "Gen Z"
+			sum_GenZ += 1
+		} else if v.Age >= 24 && v.Age <= 41 {
+			GenStr = "Gen Y"
+			sum_GenY += 1
+		} else if v.Age >= 42 && v.Age <= 56 {
+			GenStr = "Gen X"
+			sum_GenX += 1
+		} else if v.Age >= 57 && v.Age <= 75 {
+			GenStr = "Baby Boomer"
+			sum_BaByBoomer += 1
+		} else {
+			GenStr = "G.I. Generation"
+			sum_GenGI += 1
+		}
+
+		d := m.ProfileRes{
+			Name:       v.Name,
+			EmployeeId: v.EmployeeId,
+			Age:        v.Age,
+			Gen:        GenStr,
+		}
+		dataResults = append(dataResults, d)
+	}
+	r := m.ResultGen{
+		Data:          dataResults,
+		Name:          "golang-test",
+		Count:         len(profile),
+		SumGenX:       sum_GenX,
+		SumGenY:       sum_GenY,
+		SumGenZ:       sum_GenZ,
+		SumBaByBoomer: sum_BaByBoomer,
+		SumGI:         sum_GenGI,
+	}
+	return c.Status(200).JSON(r)
+}
+
 func CreateProfile(c *fiber.Ctx) error {
 	db := database.DBConn
 	profile := new(m.Profile)
@@ -36,7 +88,7 @@ func CreateProfile(c *fiber.Ctx) error {
 			profileName := strings.ToLower(e.Field())
 
 			switch profileName {
-			case "employee":
+			case "employee_id":
 				message = append(message, "Please enter your employee id")
 			case "name":
 				message = append(message, "Please enter your name")
